@@ -1,0 +1,2 @@
+gcc spin_TAS.c -o spin_TAS -lpthread
+运行：time ./spin_TAS即可看到时间 （不是太精确）
