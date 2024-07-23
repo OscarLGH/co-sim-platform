@@ -1,6 +1,18 @@
-[submodule "qemu"]
-	path = qemu
-	url = https://gitlab.com/qemu-project/qemu.git
-[submodule "test/pciutils"]
-	path = test/pciutils
-	url = git@github.com:pciutils/pciutils.git
+[submodule "simulator/gem5"]
+	path = simulator/gem5
+	url = git@github.com:OscarLGH/gem5.git
+[submodule "simulator/qemu"]
+	path = simulator/qemu
+	url = git@github.com:OscarLGH/qemu.git
+[submodule "guest_sw_stack/busybox"]
+	path = guest_sw_stack/busybox
+	url = git@github.com:OscarLGH/busybox.git
+[submodule "guest_sw_stack/edk2"]
+	path = guest_sw_stack/edk2
+	url = git@github.com:OscarLGH/edk2.git
+[submodule "guest_sw_stack/linux"]
+	path = guest_sw_stack/linux
+	url = git@github.com:OscarLGH/linux.git
+[submodule "guest_sw_stack/grub"]
+	path = guest_sw_stack/grub
+	url = https://git.savannah.gnu.org/git/grub.git
