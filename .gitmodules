@@ -16,3 +16,9 @@
 [submodule "guest_sw_stack/grub"]
 	path = guest_sw_stack/grub
 	url = https://git.savannah.gnu.org/git/grub.git
+[submodule "test/linux_drivers/pci_driver_model"]
+	path = test/linux_drivers/pci_driver_model
+	url = git@github.com:OscarLGH/pci_driver_model.git
+[submodule "test/linux_drivers/dts-platform-driver-model"]
+	path = test/linux_drivers/dts-platform-driver-model
+	url = git@github.com:OscarLGH/dts-platform-driver-model.git
