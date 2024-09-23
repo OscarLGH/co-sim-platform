@@ -39,4 +39,5 @@ sudo losetup -d $free_loop
 	-kernel Image \
 	-drive id=disk1,file=vdisk_root.img,format=raw,if=virtio \
 	-append "console=ttyS0 root=/dev/vda1" \
-	-serial stdio
+	-serial stdio \
+	-device pciemu,has_soc_backend=true,qemu_req_fd_name="/tmp/qemu-fifo-req",qemu_resp_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \

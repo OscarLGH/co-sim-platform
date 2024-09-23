@@ -1,3 +1,4 @@
+mkdir rootfs
 cd rootfs
 mkdir dev etc lib usr var proc tmp home root mnt sys
 
