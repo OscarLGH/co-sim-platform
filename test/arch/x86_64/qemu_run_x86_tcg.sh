@@ -1,43 +1,31 @@
 #!/bin/sh
-file_name="vdisk.img"
-file_sectors=16
-image_format="vfat"
+file_name_root="vdisk_root.img"
+file_sectors_root=128
+image_format_root="ext4"
 
-rm vdisk.img
-if [ ! -f $file_name ]; then
-	dd if=/dev/zero of=$file_name bs=1M count=$file_sectors
-	sleep 1
-	sudo fdisk $file_name << FCMD
-	n
-	p
-	
-	
-	
-	w
-FCMD
+rm $file_name_root
+if [ ! -f $file_name_root ]; then
+	dd if=/dev/zero of=$file_name_root bs=1M count=$file_sectors_root
 fi
 
-free_loop=`losetup -f`
-losetup $free_loop $file_name
-kpartx -av $free_loop
-mount_dev=${free_loop##*/}
-mount_path="/dev/mapper/"${mount_dev}"p1"
-sleep 1
-mkfs.$image_format $mount_path
 mkdir tmp
-mount $mount_path tmp
-cp ESP/* tmp -r
-sync
-umount tmp
-rm -rf tmp
-sudo losetup -d $free_loop
 
-qemu-system-x86_64 \
-	-cpu Broadwell \
+cp rootfs/* tmp -r
+
+mke2fs -L '' -N 0 -O ^64bit -d tmp -m 5 -r 1 -t $image_format_root $file_name_root $file_sectors_rootM
+
+rm -rf tmp
+
+../../../simulator/qemu/build/qemu-system-x86_64 \
+	-cpu Skylake-Server-v5 \
 	-smp 4,sockets=1,cores=2,threads=2 \
 	-m 2G \
-	-bios /usr/share/OVMF/OVMF_CODE.fd \
-	-drive id=disk,file=vdisk.img,format=raw,if=none \
-	-device ahci,id=ahci \
-	-device ide-drive,drive=disk,bus=ahci.0 \
-	-serial stdio
+	-machine q35,kernel-irqchip=split \
+	-bios /usr/share/ovmf/OVMF.fd \
+	-drive id=disk1,file=vdisk_root.img,format=raw,if=virtio \
+	-kernel ESP/bzImage \
+	-append "console=ttyS0,115200 root=/dev/vda" \
+	-serial stdio \
+	-device intel-iommu,intremap=on \
+	-device pciemu,has_soc_backend=true,qemu_req_fd_name="/tmp/qemu-fifo-req",qemu_resp_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_edma,has_soc_backend=true,qemu_req_fd_name="/tmp/qemu-fifo-req",qemu_resp_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \

@@ -7,15 +7,9 @@
 [submodule "guest_sw_stack/busybox"]
 	path = guest_sw_stack/busybox
 	url = git@github.com:OscarLGH/busybox.git
-[submodule "guest_sw_stack/edk2"]
-	path = guest_sw_stack/edk2
-	url = git@github.com:OscarLGH/edk2.git
 [submodule "guest_sw_stack/linux"]
 	path = guest_sw_stack/linux
 	url = git@github.com:OscarLGH/linux.git
-[submodule "guest_sw_stack/grub"]
-	path = guest_sw_stack/grub
-	url = https://git.savannah.gnu.org/git/grub.git
 [submodule "test/linux_drivers/pci_driver_model"]
 	path = test/linux_drivers/pci_driver_model
 	url = git@github.com:OscarLGH/pci_driver_model.git
