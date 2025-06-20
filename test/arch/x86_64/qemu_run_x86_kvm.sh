@@ -18,15 +18,29 @@ rm -rf tmp
 
 ../../../simulator/qemu/build/qemu-system-x86_64 \
 	-enable-kvm \
-	-cpu host\
+	-cpu host \
 	-smp 4,sockets=1,cores=2,threads=2 \
-	-m 2G \
+	-m 8G \
 	-machine q35,accel=kvm,kernel-irqchip=split \
 	-bios /usr/share/ovmf/OVMF.fd \
 	-drive id=disk1,file=vdisk_root.img,format=raw,if=virtio \
 	-kernel ESP/bzImage \
 	-append "console=ttyS0,115200 root=/dev/vda" \
 	-serial stdio \
-	-device dw_edma,has_soc_backend=true,qemu_req_fd_name="/tmp/qemu-fifo-req",qemu_resp_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory",qemu_irq_fd_name="/tmp/qemu-fd-irq" \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
+	-device dw_axi_dmac,has_soc_backend=false \
 	-device intel-iommu,intremap=on \
 	-d guest_errors -D log.txt

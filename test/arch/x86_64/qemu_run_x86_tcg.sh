@@ -17,7 +17,7 @@ mke2fs -L '' -N 0 -O ^64bit -d tmp -m 5 -r 1 -t $image_format_root $file_name_ro
 rm -rf tmp
 
 ../../../simulator/qemu/build/qemu-system-x86_64 \
-	-cpu Skylake-Server-v5 \
+	-cpu max,phys-bits=52 \
 	-smp 4,sockets=1,cores=2,threads=2 \
 	-m 2G \
 	-machine q35,kernel-irqchip=split \
@@ -28,4 +28,18 @@ rm -rf tmp
 	-serial stdio \
 	-device intel-iommu,intremap=on \
 	-device pciemu,has_soc_backend=true,qemu_req_fd_name="/tmp/qemu-fifo-req",qemu_resp_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
-	-device dw_edma,has_soc_backend=true,qemu_req_fd_name="/tmp/qemu-fifo-req",qemu_resp_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory" \
+	-device dw_axi_dmac,has_soc_backend=false,tx_req_fd_name="/tmp/qemu-fifo-req",rx_req_fd_name="/tmp/qemu-fifo-resp",soc_backend_shm_name="/gem5_share_memory"
