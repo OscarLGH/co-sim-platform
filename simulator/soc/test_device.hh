@@ -12,6 +12,8 @@ public:
     void slave_read(uint64_t addr, uint64_t size, uint64_t *data)
     {
         std::cout << "read addr:" << addr << " size:" << size << std::endl;
+        if (addr == 0)
+            master_read(5, size, data);
     }
 
     void slave_write(uint64_t addr, uint64_t size, uint64_t *data)
