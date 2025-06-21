@@ -1,5 +1,6 @@
 #include "soc_top.hh"
 #include "bus.hh"
+#include "cosim_bridge.hh"
 #include "test_device.hh"
 
 int main() {
@@ -9,10 +10,20 @@ int main() {
     for (i = 0; i < 32; i++) {
         dev[i] = new test_device(bus, i, i * 0x1000, 0x1000, 0, 32);
     }
+    cosim_bridge *co_bridge = new cosim_bridge(bus, i, 0, 0, 0, 1024,
+        "./fifo/qemu_to_soc_req",
+        "./fifo/qemu_to_soc_resp",
+        "",
+        ""
+    );
 
     for (i = 0; i < 32; i++) {
         bus->connect_ip(dev[i]);
     }
+
+    bus->connect_ip(co_bridge);
+
+    co_bridge->cosim_start_polling_remote();
 
     base_ip *ip;
     uint64_t data = 0x55aaaa55;
