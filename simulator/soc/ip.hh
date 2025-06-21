@@ -28,40 +28,49 @@ class baseBus; // Forward declaration
 
 class baseIp {
 public:
-    baseIp(uint64_t base_address, uint64_t size, baseBus *bus)
+    baseIp(baseBus *bus, uint64_t id,
+            uint64_t base_address, uint64_t size,
+            uint64_t irq_vec_start, uint64_t irq_vector_cnt)
     {
-        std::cout << "conducting ip, base:" << base_address << " size:"<< size <<std::endl;
-        base_addr = base_address;
-        addr_size = size;
+        std::cout << "conducting ip, id:" << id \
+        << " base: 0x" << std::hex << base_address << " size:"<< size \
+        << " irq_vec_start:" << irq_vec_start << " irq_vector_cnt:"<< irq_vector_cnt \
+        <<std::endl;
+
+        this->base_addr = base_address;
+        this->addr_size = size;
         this->bus = bus;
+        this->id = id;
+        this->vector_start = irq_vec_start;
+        this->nr_vectors = irq_vector_cnt;
     }
 
     virtual ~baseIp() = default;
     
-    bool addr_check_access(uint64_t addr)
+    bool mem_slave_addr_check(uint64_t addr)
     {
-        std::cout << "addr check hit:" << addr << std::endl;
         return (addr >= base_addr && addr < base_addr + addr_size);
     }
 
     virtual void reset() = 0;
 
-    BUS_ACCESS_CODE mmio_can_access(bool rw, uint64_t offset, uint64_t size)
+    BUS_ACCESS_CODE memaddr_can_access(bool rw, uint64_t offset, uint64_t size)
     {
         return ACCESS_OK;
     }
 
-    int ip_access(bool rw, uint64_t addr, uint64_t size, uint64_t *data)
+    // slave access, global address.
+    int mem_slave_access(bool rw, uint64_t addr, uint64_t size, uint64_t *data)
     {
         uint64_t offset = addr - base_addr;
         BUS_ACCESS_CODE ret = ACCESS_OK;
-        ret = mmio_can_access(rw, offset, size);
+        ret = memaddr_can_access(rw, offset, size);
         if (ret == ACCESS_OK) {
             mtx.lock();
             if (rw == MMIO_ACCESS_RW_R) {
-                slave_read(addr, size, data);
+                mem_slave_read(offset, size, data);
             } else {
-                slave_write(addr, size, data);
+                mem_slave_write(offset, size, data);
             }
             mtx.unlock();
         }
@@ -69,18 +78,45 @@ public:
         return (int)ret;
     }
 
-    virtual void slave_read(uint64_t addr, uint64_t size, uint64_t *data) = 0;
-    virtual void slave_write(uint64_t addr, uint64_t size, uint64_t *data) = 0;
+    // slave access, local addr(offset)
+    virtual void mem_slave_read(uint64_t offset, uint64_t size, uint64_t *data) = 0;
+    virtual void mem_slave_write(uint64_t offset, uint64_t size, uint64_t *data) = 0;
 
-    void master_read(uint64_t addr, uint64_t size, uint64_t *data);
-    void master_write(uint64_t addr, uint64_t size, uint64_t *data);
-    //virtual void post_irq();
+    // for ip to access bus, global address.
+    void mem_master_read(uint64_t addr, uint64_t size, uint64_t *data);
+    void mem_master_write(uint64_t addr, uint64_t size, uint64_t *data);
+
+    bool irq_can_resp(uint64_t id, uint64_t vector)
+    {
+        return (id == this->id && \
+            vector >= this->vector_start && vector < this->vector_start + this->nr_vectors);
+    }
+
+    void handle_irq(uint64_t vector)
+    {
+        std::cout << "ip:" << id \
+        << " handle irq vector " << vector \
+        << std::endl;
+    }
+
+    void recv_irq(uint64_t id, uint64_t vector)
+    {
+        if (irq_can_resp(id, vector))
+            handle_irq(vector);
+    }
+
+    void post_irq(uint64_t id, uint64_t vector);
 
 private:
     enum IP_TYPE ip_type; // Default type, can be set in derived classes
     std::mutex mtx;
+
+    uint64_t id;
     uint64_t base_addr;
     uint64_t addr_size;
+
+    uint64_t vector_start;
+    uint64_t nr_vectors;
 
 protected:
     baseBus *bus; // Pointer to the bus this IP is connected to
