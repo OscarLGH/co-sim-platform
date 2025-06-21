@@ -1,9 +1,9 @@
 #include "ip.hh"
 #include <iostream>
 
-class test_device : public baseIp {
+class test_device : public base_ip {
 public:
-    using baseIp::baseIp;
+    using base_ip::base_ip;
 
     void reset() override {
         std::cout << "reset...\n";

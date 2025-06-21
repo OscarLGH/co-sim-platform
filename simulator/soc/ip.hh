@@ -26,9 +26,9 @@ enum IP_TYPE {
 
 class baseBus; // Forward declaration
 
-class baseIp {
+class base_ip {
 public:
-    baseIp(baseBus *bus, uint64_t id,
+    base_ip(baseBus *bus, uint64_t id,
             uint64_t base_address, uint64_t size,
             uint64_t irq_vec_start, uint64_t irq_vector_cnt)
     {
@@ -45,7 +45,7 @@ public:
         this->nr_vectors = irq_vector_cnt;
     }
 
-    virtual ~baseIp() = default;
+    virtual ~base_ip() = default;
     
     bool mem_slave_addr_check(uint64_t addr)
     {
@@ -92,7 +92,7 @@ public:
             vector >= this->vector_start && vector < this->vector_start + this->nr_vectors);
     }
 
-    void handle_irq(uint64_t vector)
+    virtual void handle_irq(uint64_t vector)
     {
         std::cout << "ip:" << id \
         << " handle irq vector " << vector \

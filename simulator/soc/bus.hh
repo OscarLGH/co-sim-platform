@@ -9,10 +9,10 @@
 
 #include "ip.hh"
 
-class baseIp; // Forward declaration
+class base_ip; // Forward declaration
 class baseBus {
 public:
-    void connect_ip(baseIp *ip)
+    void connect_ip(base_ip *ip)
     {
         ipList.push_back(ip);
     }
@@ -57,7 +57,7 @@ public:
 
 private:
     std::mutex mtx;
-    std::list<baseIp *> ipList;
+    std::list<base_ip *> ipList;
 };
 
 #endif // BUS_HH

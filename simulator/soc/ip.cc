@@ -1,7 +1,7 @@
 #include "ip.hh"
 #include "bus.hh"
 
-void baseIp::mem_master_read(uint64_t addr, uint64_t size, uint64_t *data)
+void base_ip::mem_master_read(uint64_t addr, uint64_t size, uint64_t *data)
 {
     if (bus) {
         bus->master_read(addr, size, data);
@@ -10,7 +10,7 @@ void baseIp::mem_master_read(uint64_t addr, uint64_t size, uint64_t *data)
     }
 }
 
-void baseIp::mem_master_write(uint64_t addr, uint64_t size, uint64_t *data)
+void base_ip::mem_master_write(uint64_t addr, uint64_t size, uint64_t *data)
 {
     if (bus) {
         bus->master_write(addr, size, data);
@@ -19,7 +19,7 @@ void baseIp::mem_master_write(uint64_t addr, uint64_t size, uint64_t *data)
     }
 }
 
-void baseIp::post_irq(uint64_t id, uint64_t vector)
+void base_ip::post_irq(uint64_t id, uint64_t vector)
 {
     if (bus) {
         bus->post_irq(id, vector);

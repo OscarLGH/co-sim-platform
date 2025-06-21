@@ -14,7 +14,7 @@ int main() {
         bus->connect_ip(dev[i]);
     }
 
-    baseIp *ip;
+    base_ip *ip;
     uint64_t data = 0x55aaaa55;
     bus->master_read(0x1000, 4, &data);
     bus->master_read(0x1004, 4, &data);
