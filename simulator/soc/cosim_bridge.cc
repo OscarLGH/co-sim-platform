@@ -70,25 +70,32 @@ void cosim_bridge::fifo_recv_func()
             std::cerr << "Error reading from rx_fd_req: " << strerror(errno) << std::endl;
             continue; // Handle error appropriately
         } else if (ret == 0) {
-            //std::cout << "End of file reached on rx_fd_req." << std::endl;
-            //break; // Exit loop on EOF
+            std::cout << "End of file reached on rx_fd_req." << std::endl;
+            break; // Exit loop on EOF
         } else {
             // Process the command
             std::cout << "Received command: addr=0x" << std::hex << cmd.addr 
                     << ", data=0x" << cmd.data << std::endl;
             if (cmd.type == EX_PKT_RD) {
                 uint64_t data = 0;
-                mem_slave_read(cmd.addr, cmd.length, &data);
+                mem_master_read(cmd.addr, cmd.length, &data);
                 cmd.data = data; // Update cmd.data with the read value
                 // Write response back
-                ssize_t write_ret = write(tx_fd_resp, &cmd, sizeof(cmd));
+                ssize_t write_ret = write(rx_fd_resp, &cmd, sizeof(cmd));
                 if (write_ret < 0) {
-                    std::cerr << "Error writing to tx_fd_resp: " << strerror(errno) << std::endl;
+                    std::cerr << "Error writing to rx_fd_resp: " << strerror(errno) << std::endl;
                 } else if (write_ret != sizeof(cmd)) {
-                    std::cerr << "Partial write to tx_fd_resp." << std::endl;
+                    std::cerr << "Partial write to rx_fd_resp." << std::endl;
                 }
             } else if (cmd.type == EX_PKT_WR) {
-                mem_slave_write(cmd.addr, cmd.length, &cmd.data);
+                mem_master_write(cmd.addr, cmd.length, &cmd.data);
+                cmd.type = EX_PKT_RESP_FLAG; // Set response flag
+                ssize_t write_ret = write(rx_fd_resp, &cmd, sizeof(cmd));
+                if (write_ret < 0) {
+                    std::cerr << "Error writing to rx_fd_resp: " << strerror(errno) << std::endl;
+                } else if (write_ret != sizeof(cmd)) {
+                    std::cerr << "Partial write to rx_fd_resp." << std::endl;
+                }
             } else if (cmd.type == EX_PKT_IRQ) {
                 handle_irq(cmd.data); // Assuming cmd.data contains the vector
             } else {
