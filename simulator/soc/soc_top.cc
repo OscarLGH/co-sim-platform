@@ -27,6 +27,9 @@ int main() {
     bus->master_write(0x1000, 4, &data);
     bus->post_irq(5, 16);
 
+    void *ptr = bus->master_get_shm_ptr(0x1000);
+    memset(ptr, 0xaa, 0x1000);
+
     while(1);
     return 0;
 }
