@@ -17,12 +17,6 @@ int main() {
         ""
     );
 
-    for (i = 0; i < 32; i++) {
-        bus->connect_ip(dev[i]);
-    }
-
-    bus->connect_ip(co_bridge);
-
     co_bridge->cosim_start_polling_remote();
 
     base_ip *ip;
@@ -30,5 +24,7 @@ int main() {
     bus->master_read(0x1000, 4, &data);
     bus->master_read(0x1004, 4, &data);
     bus->post_irq(5, 16);
+
+    while(1);
     return 0;
 }

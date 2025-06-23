@@ -1,6 +1,24 @@
 #include "ip.hh"
 #include "bus.hh"
 
+base_ip::base_ip(baseBus *bus, uint64_t id,
+            uint64_t base_address, uint64_t size,
+            uint64_t irq_vec_start, uint64_t irq_vector_cnt)
+{
+    std::cout << "conducting ip, id:" << id \
+    << " base: 0x" << std::hex << base_address << " size:"<< size \
+    << " irq_vec_start:" << irq_vec_start << " irq_vector_cnt:"<< irq_vector_cnt \
+    <<std::endl;
+
+    this->base_addr = base_address;
+    this->addr_size = size;
+    this->bus = bus;
+    this->id = id;
+    this->vector_start = irq_vec_start;
+    this->nr_vectors = irq_vector_cnt;
+    this->bus->connect_ip(this);
+}
+
 void base_ip::mem_master_read(uint64_t addr, uint64_t size, uint64_t *data)
 {
     if (bus) {

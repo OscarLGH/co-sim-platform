@@ -18,7 +18,7 @@ enum BUS_ACCESS_CODE {
 };
 
 enum IP_TYPE {
-    IP_TYPE_DRAM = 0,
+    IP_TYPE_RAM = 0,
     IP_TYPE_PERIPHERAL = 1,
     IP_TYPE_OTHER = 2,
     IP_TYPE_MAX
@@ -30,21 +30,7 @@ class base_ip {
 public:
     base_ip(baseBus *bus, uint64_t id,
             uint64_t base_address, uint64_t size,
-            uint64_t irq_vec_start, uint64_t irq_vector_cnt)
-    {
-        std::cout << "conducting ip, id:" << id \
-        << " base: 0x" << std::hex << base_address << " size:"<< size \
-        << " irq_vec_start:" << irq_vec_start << " irq_vector_cnt:"<< irq_vector_cnt \
-        <<std::endl;
-
-        this->base_addr = base_address;
-        this->addr_size = size;
-        this->bus = bus;
-        this->id = id;
-        this->vector_start = irq_vec_start;
-        this->nr_vectors = irq_vector_cnt;
-    }
-
+            uint64_t irq_vec_start, uint64_t irq_vector_cnt);
     virtual ~base_ip() = default;
     
     bool mem_slave_addr_check(uint64_t addr)

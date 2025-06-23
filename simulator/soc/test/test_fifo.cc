@@ -47,7 +47,7 @@ int main() {
         read(resp_fd, &cmd_resp, sizeof(cmd_resp));
         std::cout << "收到响应: addr = " << std::hex << cmd_resp.addr 
                   << ", data = " << cmd_resp.data << std::endl;
-        sleep(1); // 每秒写入一次
+        //sleep(1); // 每秒写入一次
     }
     
     close(req_fd);

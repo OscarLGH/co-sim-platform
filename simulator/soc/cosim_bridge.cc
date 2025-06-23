@@ -119,5 +119,5 @@ void cosim_bridge::cosim_start_polling_remote()
     }
     auto bindfunc = std::bind(&cosim_bridge::fifo_recv_func, this);
     std::thread t(bindfunc);
-    t.join(); // Detach the thread to run independently
+    t.detach(); // Detach the thread to run independently
 }
