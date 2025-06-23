@@ -18,9 +18,9 @@ enum BUS_ACCESS_CODE {
 };
 
 enum IP_TYPE {
-    IP_TYPE_RAM = 0,
-    IP_TYPE_PERIPHERAL = 1,
-    IP_TYPE_OTHER = 2,
+    IP_TYPE_RAM = 1,
+    IP_TYPE_PERIPHERAL = 2,
+    IP_TYPE_OTHER = 3,
     IP_TYPE_MAX
 };
 
@@ -28,7 +28,7 @@ class baseBus; // Forward declaration
 
 class base_ip {
 public:
-    base_ip(baseBus *bus, uint64_t id,
+    base_ip(baseBus *bus, uint64_t id, IP_TYPE type,
             uint64_t base_address, uint64_t size,
             uint64_t irq_vec_start, uint64_t irq_vector_cnt);
     virtual ~base_ip() = default;
@@ -72,6 +72,23 @@ public:
     void mem_master_read(uint64_t addr, uint64_t size, uint64_t *data);
     void mem_master_write(uint64_t addr, uint64_t size, uint64_t *data);
 
+    // for ip that support shared memory, return a pointer to the shared memory for fast access.
+    void *mem_master_get_shm_ptr(uint64_t addr)
+    {
+        return shm_ptr;
+    }
+
+    // Check if the IP can respond to an IRQ with a specific vector.
+    // id: the ID of the IP that is sending the IRQ.
+    // vector: the IRQ vector number.
+    // Returns true if the IP can respond to the IRQ, false otherwise.
+    // This function checks if the ID matches and if the vector is within the valid range.
+    // The valid range is from vector_start to vector_start + nr_vectors.
+    // This is used to determine if the IP should handle the IRQ.
+    // The vector_start and nr_vectors are set during the IP's construction.
+    // This function is thread-safe and can be called from multiple threads.
+    // It uses a mutex to ensure that the ID and vector checks are atomic.
+    // This is important for ensuring that the IP can handle IRQs correctly in a multi-thread
     bool irq_can_resp(uint64_t id, uint64_t vector)
     {
         return (id == this->id && \
@@ -93,16 +110,19 @@ public:
 
     void post_irq(uint64_t id, uint64_t vector);
 
-private:
+public:
     enum IP_TYPE ip_type; // Default type, can be set in derived classes
-    std::mutex mtx;
-
     uint64_t id;
     uint64_t base_addr;
     uint64_t addr_size;
 
     uint64_t vector_start;
     uint64_t nr_vectors;
+
+    void *shm_ptr = NULL; // Pointer to shared memory, if applicable
+
+private:
+    std::mutex mtx;
 
 protected:
     baseBus *bus; // Pointer to the bus this IP is connected to

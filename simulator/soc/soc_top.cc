@@ -1,14 +1,14 @@
 #include "soc_top.hh"
 #include "bus.hh"
 #include "cosim_bridge.hh"
-#include "test_device.hh"
+#include "ram.hh"
 
 int main() {
     int i = 0;
-    baseBus *bus = new baseBus();
-    test_device *dev[32];
+    baseBus *bus = new baseBus(0, "soc_bus");
+    ram *dev[32];
     for (i = 0; i < 32; i++) {
-        dev[i] = new test_device(bus, i, i * 0x1000, 0x1000, 0, 32);
+        dev[i] = new ram(bus, i, i * 0x1000, 0x1000, 0, 0);
     }
     cosim_bridge *co_bridge = new cosim_bridge(bus, i, 0, 0, 0, 1024,
         "./fifo/qemu_to_soc_req",
@@ -20,9 +20,11 @@ int main() {
     co_bridge->cosim_start_polling_remote();
 
     base_ip *ip;
-    uint64_t data = 0x55aaaa55;
+    uint64_t data = 0;
     bus->master_read(0x1000, 4, &data);
     bus->master_read(0x1004, 4, &data);
+    data = 0x55aaaa55;
+    bus->master_write(0x1000, 4, &data);
     bus->post_irq(5, 16);
 
     while(1);

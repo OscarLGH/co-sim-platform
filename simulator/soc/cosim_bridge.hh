@@ -34,7 +34,7 @@ public:
                  uint64_t irq_vec_start, uint64_t irq_vector_cnt,
                  char *rx_fd_req_path, char *rx_fd_resp_path,
                  char *tx_fd_req_path, char *tx_fd_resp_path)
-        : base_ip(bus, id, base_address, size, irq_vec_start, irq_vector_cnt) {
+        : base_ip(bus, id, IP_TYPE_PERIPHERAL, base_address, size, irq_vec_start, irq_vector_cnt) {
         this->rx_fd_req_path = rx_fd_req_path;
         this->rx_fd_resp_path = rx_fd_resp_path;
         this->tx_fd_req_path = tx_fd_req_path;

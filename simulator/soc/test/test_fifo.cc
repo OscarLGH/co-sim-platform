@@ -42,12 +42,15 @@ int main() {
     exPktCmd cmd_resp;
 
     while (1) {
+        cmd.data++;
+        std::cout << "发送命令: addr = " << std::hex << cmd.addr 
+                  << ", data = " << cmd.data << std::endl;
         write(req_fd, &cmd, sizeof(cmd));
-        cmd.addr += 0x1000;
+        cmd.addr += 4;
         read(resp_fd, &cmd_resp, sizeof(cmd_resp));
         std::cout << "收到响应: addr = " << std::hex << cmd_resp.addr 
                   << ", data = " << cmd_resp.data << std::endl;
-        //sleep(1); // 每秒写入一次
+        sleep(1); // 每秒写入一次
     }
     
     close(req_fd);

@@ -1,7 +1,7 @@
 #include "ip.hh"
 #include "bus.hh"
 
-base_ip::base_ip(baseBus *bus, uint64_t id,
+base_ip::base_ip(baseBus *bus, uint64_t id, IP_TYPE type,
             uint64_t base_address, uint64_t size,
             uint64_t irq_vec_start, uint64_t irq_vector_cnt)
 {
@@ -16,6 +16,7 @@ base_ip::base_ip(baseBus *bus, uint64_t id,
     this->id = id;
     this->vector_start = irq_vec_start;
     this->nr_vectors = irq_vector_cnt;
+    this->ip_type = type; // Default type, can be set in derived classes
     this->bus->connect_ip(this);
 }
 
