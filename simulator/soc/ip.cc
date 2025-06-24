@@ -6,7 +6,7 @@ base_ip::base_ip(baseBus *bus, uint64_t id, IP_TYPE type,
             uint64_t irq_vec_start, uint64_t irq_vector_cnt)
 {
     LOG_DEBUG("ip constructed.\
-        id = %d, type = %d, base_addr = %lx, size = %lx, irq_vec_start = %lx, irq_vector_cnt = %lx\n",
+        id = %d, type = %d, base_addr = %lx, size = %lx, irq_vec_start = %lx, irq_vector_cnt = %lx.",
         id, type, base_address, size, irq_vec_start, irq_vector_cnt
     );
 
@@ -25,7 +25,7 @@ void base_ip::mem_master_read(uint64_t addr, uint64_t size, uint64_t *data)
     if (bus) {
         bus->master_read(addr, size, data);
     } else {
-        std::cerr << "Error: No bus connected to this IP." << std::endl;
+        LOG_ERROR("Error: No bus connected to this IP.");
     }
 }
 
@@ -34,7 +34,7 @@ void base_ip::mem_master_write(uint64_t addr, uint64_t size, uint64_t *data)
     if (bus) {
         bus->master_write(addr, size, data);
     } else {
-        std::cerr << "Error: No bus connected to this IP." << std::endl;
+        LOG_ERROR("Error: No bus connected to this IP.");
     }
 }
 
@@ -43,6 +43,6 @@ void base_ip::post_irq(uint64_t id, uint64_t vector)
     if (bus) {
         bus->post_irq(id, vector);
     } else {
-        std::cerr << "Error: No bus connected to this IP." << std::endl;
+        LOG_ERROR("Error: No bus connected to this IP for posting IRQ.");
     }
 }

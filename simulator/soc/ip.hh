@@ -99,9 +99,7 @@ public:
 
     virtual void handle_irq(uint64_t vector)
     {
-        std::cout << "ip:" << id \
-        << " handle irq vector " << vector \
-        << std::endl;
+        LOG_DEBUG("IP %lu handling IRQ vector %lu", id, vector);
     }
 
     void recv_irq(uint64_t id, uint64_t vector)

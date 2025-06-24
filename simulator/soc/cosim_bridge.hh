@@ -49,7 +49,7 @@ public:
     }
 
     void reset() override {
-        std::cout << "reset...\n";
+        LOG_DEBUG("cosim_bridge reset called.");
     }
 
     void mem_slave_read(uint64_t offset, uint64_t size, uint64_t *data);
