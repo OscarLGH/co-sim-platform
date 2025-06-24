@@ -2,9 +2,13 @@
 #include "bus.hh"
 #include "cosim_bridge.hh"
 #include "ram.hh"
+#include "debugger.hh"
 
 int main() {
     int i = 0;
+
+    debugger::set_level(debugger::DEBUG);
+
     baseBus *bus = new baseBus(0, "soc_bus");
     ram *dev[32];
     for (i = 0; i < 32; i++) {

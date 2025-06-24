@@ -5,10 +5,10 @@ base_ip::base_ip(baseBus *bus, uint64_t id, IP_TYPE type,
             uint64_t base_address, uint64_t size,
             uint64_t irq_vec_start, uint64_t irq_vector_cnt)
 {
-    std::cout << "conducting ip, id:" << id \
-    << " base: 0x" << std::hex << base_address << " size:"<< size \
-    << " irq_vec_start:" << irq_vec_start << " irq_vector_cnt:"<< irq_vector_cnt \
-    <<std::endl;
+    LOG_DEBUG("ip constructed.\
+        id = %d, type = %d, base_addr = %lx, size = %lx, irq_vec_start = %lx, irq_vector_cnt = %lx\n",
+        id, type, base_address, size, irq_vec_start, irq_vector_cnt
+    );
 
     this->base_addr = base_address;
     this->addr_size = size;

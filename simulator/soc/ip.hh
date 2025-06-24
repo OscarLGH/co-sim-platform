@@ -6,6 +6,8 @@
 #include <thread>
 #include <mutex>
 
+#include "debugger.hh"
+
 #define MMIO_ACCESS_RW_R 0
 #define MMIO_ACCESS_RW_W 1
 
