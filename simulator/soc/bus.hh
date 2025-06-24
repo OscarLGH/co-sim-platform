@@ -16,21 +16,21 @@
 #include <string.h>
 
 class base_ip; // Forward declaration
-class baseBus {
+class base_bus {
 public:
-    // Constructor for baseBus, initializes the bus with a unique ID and shared memory name.
+    // Constructor for base_bus, initializes the bus with a unique ID and shared memory name.
     // @id: Unique identifier for the bus.
     // @name: Name for the shared memory segment, used for inter-process communication.
     // It creates a shared memory segment with the specified name.
-    baseBus(int id, char *name) : bus_id(id) {
-        LOG_DEBUG("baseBus constructed with ID: %d, name: %s", id, name);
+    base_bus(int id, char *name) : bus_id(id) {
+        LOG_DEBUG("base_bus constructed with ID: %d, name: %s", id, name);
         shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666);
     }
 
-    // Destructor for baseBus, cleans up the shared memory segment.
+    // Destructor for base_bus, cleans up the shared memory segment.
     // It closes the shared memory file descriptor and unlinks the shared memory segment.
-    ~baseBus() {
-        LOG_DEBUG("baseBus destructed with ID: %d", bus_id);
+    ~base_bus() {
+        LOG_DEBUG("base_bus destructed with ID: %d", bus_id);
         if (shm_ptr) {
             munmap(shm_ptr, shm_fd);
             shm_ptr = nullptr; // Set to nullptr after unmapping

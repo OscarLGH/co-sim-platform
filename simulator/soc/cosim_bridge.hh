@@ -29,7 +29,7 @@ class cosim_bridge : public base_ip {
 public:
     using base_ip::base_ip;
 
-    cosim_bridge(baseBus *bus, uint64_t id,
+    cosim_bridge(base_bus *bus, uint64_t id,
                  uint64_t base_address, uint64_t size,
                  uint64_t irq_vec_start, uint64_t irq_vector_cnt,
                  char *rx_fd_req_path, char *rx_fd_resp_path,

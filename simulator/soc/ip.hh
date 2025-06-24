@@ -26,7 +26,7 @@ enum IP_TYPE {
     IP_TYPE_MAX
 };
 
-class baseBus; // Forward declaration
+class base_bus; // Forward declaration
 
 class base_ip {
 public:
@@ -41,7 +41,7 @@ public:
     // @irq_vector_cnt: Number of IRQ vectors this IP can handle.
     // This constructor initializes the IP's base address, size, ID, type, and IRQ vector information.
     // It also connects the IP to the bus by calling the bus's connect_ip method.
-    base_ip(baseBus *bus, uint64_t id, IP_TYPE type,
+    base_ip(base_bus *bus, uint64_t id, IP_TYPE type,
             uint64_t base_address, uint64_t size,
             uint64_t irq_vec_start, uint64_t irq_vector_cnt);
 
@@ -203,7 +203,7 @@ private:
     std::mutex mtx;
 
 protected:
-    baseBus *bus; // Pointer to the bus this IP is connected to
+    base_bus *bus; // Pointer to the bus this IP is connected to
 };
 
 #endif // IP_HH

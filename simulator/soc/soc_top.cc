@@ -9,7 +9,7 @@ int main() {
 
     debugger::set_level(debugger::DEBUG);
 
-    baseBus *bus = new baseBus(0, "soc_bus");
+    base_bus *bus = new base_bus(0, "soc_bus");
     ram *dev[32];
     for (i = 0; i < 32; i++) {
         dev[i] = new ram(bus, i, i * 0x1000, 0x1000, 0, 0);
@@ -34,6 +34,8 @@ int main() {
     void *ptr = bus->master_get_shm_ptr(0x1000);
     memset(ptr, 0xaa, 0x1000);
 
-    while(1);
+    while(1) {
+        LOG_DEBUG("idle");
+    }
     return 0;
 }

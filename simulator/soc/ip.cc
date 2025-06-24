@@ -1,7 +1,7 @@
 #include "ip.hh"
 #include "bus.hh"
 
-base_ip::base_ip(baseBus *bus, uint64_t id, IP_TYPE type,
+base_ip::base_ip(base_bus *bus, uint64_t id, IP_TYPE type,
             uint64_t base_address, uint64_t size,
             uint64_t irq_vec_start, uint64_t irq_vector_cnt)
 {

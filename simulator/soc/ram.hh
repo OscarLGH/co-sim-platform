@@ -5,7 +5,7 @@ class ram : public base_ip {
 public:
     using base_ip::base_ip;
 
-    ram(baseBus *bus, uint64_t id,
+    ram(base_bus *bus, uint64_t id,
         uint64_t base_address, uint64_t size,
         uint64_t irq_vec_start, uint64_t irq_vector_cnt)
             : base_ip(bus, id, IP_TYPE_RAM, base_address, size, irq_vec_start, irq_vector_cnt)
