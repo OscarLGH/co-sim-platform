@@ -18,11 +18,37 @@
 class base_ip; // Forward declaration
 class baseBus {
 public:
-
+    // Constructor for baseBus, initializes the bus with a unique ID and shared memory name.
+    // @id: Unique identifier for the bus.
+    // @name: Name for the shared memory segment, used for inter-process communication.
+    // It creates a shared memory segment with the specified name.
     baseBus(int id, char *name) : bus_id(id) {
         LOG_DEBUG("baseBus constructed with ID: %d, name: %s", id, name);
         shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666);
     }
+
+    // Destructor for baseBus, cleans up the shared memory segment.
+    // It closes the shared memory file descriptor and unlinks the shared memory segment.
+    ~baseBus() {
+        LOG_DEBUG("baseBus destructed with ID: %d", bus_id);
+        if (shm_ptr) {
+            munmap(shm_ptr, shm_fd);
+            shm_ptr = nullptr; // Set to nullptr after unmapping
+        }
+        if (shm_fd >= 0) {
+            close(shm_fd);
+            shm_fd = -1; // Set to -1 after closing
+        }
+        shm_unlink("/soc_shm"); // Unlink the shared memory segment
+        LOG_DEBUG("Shared memory segment unlinked.");
+    }
+
+    // Connects an IP to the bus.
+    // @ip: Pointer to the base_ip object representing the IP to be connected.
+    // It adds the IP to the list of connected IPs and maps the shared memory if the IP type is RAM.
+    // It also sets the shared memory pointer in the IP to the start of the shared memory region.
+    // If the IP type is not RAM, it does not map shared memory.
+    // If the mapping fails, it logs an error and sets the shared memory pointer to nullptr.
 
     void connect_ip(base_ip *ip)
     {
@@ -42,6 +68,9 @@ public:
         }
     }
 
+    // Master read and write functions for the bus.
+    // These functions are used by IPs to read from and write to the bus.
+    // They take a global address and size, and perform the read or write operation.
     void master_read(uint64_t addr, uint64_t size, uint64_t *data)
     {
         LOG_DEBUG("master_read addr: %lx size: %lu", addr, size);
@@ -55,6 +84,12 @@ public:
         LOG_ERROR("No IP found for address: %lx", addr);
     }
 
+    // This function writes data to a specific address on the bus.
+    // It checks all connected IPs to find the one that can handle the address.
+    // If an IP can handle the address, it performs a write operation on that IP.
+    // @addr: The global address where the data should be written.
+    // @size: The size of the data to be written.
+    // @data: Pointer to the data to be written.
     void master_write(uint64_t addr, uint64_t size, uint64_t *data)
     {
         LOG_DEBUG("master_write addr: %lx size: %lu data: %lx", addr, size, *data);
@@ -86,6 +121,14 @@ public:
         return nullptr;
     }
     
+    // Posts an IRQ to the bus.
+    // This function iterates through the list of connected IPs and checks if any IP can respond to the IRQ.
+    // If an IP can respond, it calls the recv_irq method on that IP.
+    // If no IP can respond, it logs an error message.
+    // @id: The ID of the IP that is sending the IRQ.
+    // @vector: The IRQ vector number.
+    // This function is used to notify the bus that an IRQ has occurred and needs to be handled.
+    // It is typically called by IPs when they need to signal an interrupt.
     void post_irq(uint64_t id, uint64_t vector)
     {
         LOG_DEBUG("Posting IRQ: id = %lu, vector = %lu", id, vector);
