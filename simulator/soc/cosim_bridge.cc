@@ -105,16 +105,20 @@ void cosim_bridge::fifo_recv_func()
 void cosim_bridge::cosim_start_polling_remote()
 {
     LOG_DEBUG("cosim_bridge starting polling remote.");
+    LOG_DEBUG("opening fifo:%s\n", tx_fd_req_path);
     tx_fd_req = open(tx_fd_req_path, O_WRONLY, 0666);
     if (tx_fd_req < 0) {
         LOG_ERROR("Error opening tx_fd_req: %s", strerror(errno));
         //throw std::runtime_error("Failed to open tx_fd_req");
     }
+    LOG_DEBUG("opening fifo:%s\n", tx_fd_resp_path);
     tx_fd_resp = open(tx_fd_resp_path, O_RDONLY, 0666);
     if (tx_fd_resp < 0) {
         LOG_ERROR("Error opening tx_fd_resp: %s", strerror(errno));
         //throw std::runtime_error("Failed to open tx_fd_resp");
     }
+
+    LOG_DEBUG("start listening...\n");
     auto bindfunc = std::bind(&cosim_bridge::fifo_recv_func, this);
     std::thread t(bindfunc);
     t.detach(); // Detach the thread to run independently
