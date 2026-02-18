@@ -71,7 +71,7 @@ public:
     // Master read and write functions for the bus.
     // These functions are used by IPs to read from and write to the bus.
     // They take a global address and size, and perform the read or write operation.
-    void master_read(uint64_t addr, uint64_t size, uint64_t *data)
+    void master_read(uint64_t addr, uint64_t size, void *data)
     {
         LOG_DEBUG("master_read addr: %lx size: %lu", addr, size);
 
@@ -89,10 +89,10 @@ public:
     // If an IP can handle the address, it performs a write operation on that IP.
     // @addr: The global address where the data should be written.
     // @size: The size of the data to be written.
-    // @data: Pointer to the data to be written.
-    void master_write(uint64_t addr, uint64_t size, uint64_t *data)
+    // @data: Pointer to the data buffer to be written.
+    void master_write(uint64_t addr, uint64_t size, void *data)
     {
-        LOG_DEBUG("master_write addr: %lx size: %lu data: %lx", addr, size, *data);
+        LOG_DEBUG("master_write addr: %lx size: %lu", addr, size);
 
         for (auto &ip : ipList) {
             if (ip->mem_slave_addr_check(addr)) {

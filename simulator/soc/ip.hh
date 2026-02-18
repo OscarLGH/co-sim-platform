@@ -79,13 +79,13 @@ public:
     // @rw: The type of access (read or write).
     // @addr: The global address to access.
     // @size: The size of the access.
-    // @data: Pointer to the data to read or write.
+    // @data: Pointer to the data buffer to read or write.
     // Returns an integer indicating the result of the access operation.
     // If the access is allowed, it locks the mutex, performs the read or write operation,
     // and then unlocks the mutex. If the access is denied, it returns an error code.
     // This function is thread-safe and ensures that only one thread can access the memory
     // at a time by using a mutex.
-    int mem_slave_access(bool rw, uint64_t addr, uint64_t size, uint64_t *data)
+    int mem_slave_access(bool rw, uint64_t addr, uint64_t size, void *data)
     {
         uint64_t offset = addr - base_addr;
         BUS_ACCESS_CODE ret = ACCESS_OK;
@@ -108,27 +108,27 @@ public:
     // They are used to read from and write to the IP's memory region.
     // @offset: The offset from the base address to read or write.
     // @size: The size of the data to read or write.
-    // @data: Pointer to the data to read or write.
+    // @data: Pointer to the data buffer to read or write.
     // These functions are called by the bus when an IP is accessed for a read or write operation.
     // They should handle the actual memory access logic, such as reading from or writing to
     // the IP's internal memory or shared memory region.
     // The derived classes should implement these functions to perform the actual memory operations.
-    virtual void mem_slave_read(uint64_t offset, uint64_t size, uint64_t *data) = 0;
-    virtual void mem_slave_write(uint64_t offset, uint64_t size, uint64_t *data) = 0;
+    virtual void mem_slave_read(uint64_t offset, uint64_t size, void *data) = 0;
+    virtual void mem_slave_write(uint64_t offset, uint64_t size, void *data) = 0;
 
     // Master memory read and write functions.
     // These functions are used by the IP to read from and write to the bus.
     // They take a global address and size, and perform the read or write operation.
     // @addr: The global address to read from or write to.
     // @size: The size of the data to read or write.
-    // @data: Pointer to the data to read or write.
+    // @data: Pointer to the data buffer to read or write.
     // These functions are called by the IP when it needs to access memory on the bus.
     // They should call the bus's master_read or master_write functions to perform the operation.
     // If the bus is not connected, they log an error message.
     // The derived classes can use these functions to access memory on the bus without
     // needing to know the details of the bus implementation.
-    void mem_master_read(uint64_t addr, uint64_t size, uint64_t *data);
-    void mem_master_write(uint64_t addr, uint64_t size, uint64_t *data);
+    void mem_master_read(uint64_t addr, uint64_t size, void *data);
+    void mem_master_write(uint64_t addr, uint64_t size, void *data);
 
     // Get a pointer to the shared memory region for fast access.
     // This function is used by the IP to access shared memory directly without going through the bus.

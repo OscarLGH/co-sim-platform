@@ -16,6 +16,6 @@ public:
         LOG_DEBUG("ram reset called.");
     }
 
-    void mem_slave_read(uint64_t offset, uint64_t size, uint64_t *data);
-    void mem_slave_write(uint64_t offset, uint64_t size, uint64_t *data);
+    void mem_slave_read(uint64_t offset, uint64_t size, void *data) override;
+    void mem_slave_write(uint64_t offset, uint64_t size, void *data) override;
 };

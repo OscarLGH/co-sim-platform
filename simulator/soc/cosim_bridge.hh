@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <cstdint>
+#include <cstring>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -52,8 +53,8 @@ public:
         LOG_DEBUG("cosim_bridge reset called.");
     }
 
-    void mem_slave_read(uint64_t offset, uint64_t size, uint64_t *data);
-    void mem_slave_write(uint64_t offset, uint64_t size, uint64_t *data);
+    void mem_slave_read(uint64_t offset, uint64_t size, void *data) override;
+    void mem_slave_write(uint64_t offset, uint64_t size, void *data) override;
 
     void handle_irq(uint64_t vector) override;
 

@@ -1,6 +1,6 @@
 #include "cosim_bridge.hh"
 
-void cosim_bridge::mem_slave_read(uint64_t offset, uint64_t size, uint64_t *data)
+void cosim_bridge::mem_slave_read(uint64_t offset, uint64_t size, void *data)
 {
     exPktCmd cmd;
     cmd.addr = offset;
@@ -17,15 +17,16 @@ void cosim_bridge::mem_slave_read(uint64_t offset, uint64_t size, uint64_t *data
     }
 
     ret = read(tx_fd_resp, &cmd, sizeof(cmd));
-    *data = cmd.data;
+    memcpy(data, &cmd.data, size);
 }
 
-void cosim_bridge::mem_slave_write(uint64_t offset, uint64_t size, uint64_t *data)
+void cosim_bridge::mem_slave_write(uint64_t offset, uint64_t size, void *data)
 {
     exPktCmd cmd;
     cmd.addr = offset;
     cmd.length = size;
     cmd.type = EX_PKT_WR;
+    memcpy(&cmd.data, data, size);
 
     ssize_t ret = write(tx_fd_req, &cmd, sizeof(cmd));
     if (ret < 0) {

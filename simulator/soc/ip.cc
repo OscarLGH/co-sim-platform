@@ -20,7 +20,7 @@ base_ip::base_ip(base_bus *bus, uint64_t id, IP_TYPE type,
     this->bus->connect_ip(this);
 }
 
-void base_ip::mem_master_read(uint64_t addr, uint64_t size, uint64_t *data)
+void base_ip::mem_master_read(uint64_t addr, uint64_t size, void *data)
 {
     if (bus) {
         bus->master_read(addr, size, data);
@@ -29,7 +29,7 @@ void base_ip::mem_master_read(uint64_t addr, uint64_t size, uint64_t *data)
     }
 }
 
-void base_ip::mem_master_write(uint64_t addr, uint64_t size, uint64_t *data)
+void base_ip::mem_master_write(uint64_t addr, uint64_t size, void *data)
 {
     if (bus) {
         bus->master_write(addr, size, data);
