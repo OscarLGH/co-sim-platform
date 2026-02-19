@@ -5,11 +5,36 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
+#include <queue>
+#include <functional>
+#include <atomic>
+#include <chrono>
 
 #include "debugger.hh"
 
 #define MMIO_ACCESS_RW_R 0
 #define MMIO_ACCESS_RW_W 1
+
+// Action types for asynchronous operations
+enum IP_ACTION_TYPE {
+    IP_ACTION_NONE = 0,
+    IP_ACTION_DMA_START = 1,
+    IP_ACTION_DMA_DONE = 2,
+    IP_ACTION_TIMER = 3,
+    IP_ACTION_CUSTOM = 100,
+};
+
+struct ip_action {
+    enum IP_ACTION_TYPE type;
+    uint64_t addr;       // Address involved in the action
+    uint64_t data;       // Data for the action
+    uint64_t size;       // Size of the data
+    uint64_t timestamp;  // Timestamp when action was triggered
+    
+    ip_action(IP_ACTION_TYPE t = IP_ACTION_NONE, uint64_t a = 0, uint64_t d = 0, uint64_t s = 0)
+        : type(t), addr(a), data(d), size(s), timestamp(0) {}
+};
 
 enum BUS_ACCESS_CODE {
     /* Remote port responses. */
@@ -187,6 +212,67 @@ public:
     // @id: The ID of the IP that is sending the IRQ.
     // @vector: The IRQ vector number to post.
     void post_irq(uint64_t id, uint64_t vector);
+
+    // Action triggering and processing functions for asynchronous operations.
+    // These functions enable IP actions (like DMA doorbell) to be triggered by register writes
+    // and processed in a separate thread asynchronously.
+    
+    // Trigger an action to be processed asynchronously.
+    // @action: The action structure containing type, addr, data, and size.
+    // This function pushes the action to a queue and signals the action thread to process it.
+    void trigger_action(const ip_action &action);
+
+    // Check if the given offset should trigger an action.
+    // @offset: The offset from the base address to check.
+    // @size: The size of the access.
+    // @rw: Whether this is a read (false) or write (true) operation.
+    // @data: Pointer to the data for write operations.
+    // Returns true if an action should be triggered, false otherwise.
+    // Derived classes can override this to define which register writes trigger actions.
+    virtual bool should_trigger_action(uint64_t offset, uint64_t size, bool rw, void *data)
+    {
+        (void)offset; (void)size; (void)rw; (void)data;
+        return false;
+    }
+
+    // Get the action to trigger for the given offset.
+    // @offset: The offset from the base address.
+    // @size: The size of the access.
+    // @data: Pointer to the data for write operations.
+    // Returns an ip_action structure describing the action to trigger.
+    // Derived classes should override this to define what action to trigger.
+    virtual ip_action get_action(uint64_t offset, uint64_t size, void *data)
+    {
+        (void)offset; (void)size; (void)data;
+        return ip_action(IP_ACTION_NONE);
+    }
+
+    // Process a single action asynchronously.
+    // @action: The action to process.
+    // This function is called by the action thread for each action in the queue.
+    // Derived classes can override this to implement custom action processing logic.
+    virtual void process_action(const ip_action &action)
+    {
+        LOG_DEBUG("IP %lu processing action type=%d addr=0x%lx data=0x%lx size=%lu",
+                  id, action.type, action.addr, action.data, action.size);
+    }
+
+protected:
+    // The action processing thread function.
+    // This function runs in a separate thread and processes actions from the queue.
+    void action_thread_func();
+
+    // Start the action processing thread.
+    void start_action_thread();
+
+    // Stop the action processing thread.
+    void stop_action_thread();
+
+    std::mutex action_mtx; // Mutex for protecting the action queue
+    std::queue<ip_action> action_queue; // Queue of pending actions
+    std::condition_variable action_cv; // Condition variable for action processing
+    std::atomic<bool> action_thread_running{false}; // Flag to control action thread
+    std::thread action_thread; // The action processing thread
 
 public:
     enum IP_TYPE ip_type; // Default type, can be set in derived classes
